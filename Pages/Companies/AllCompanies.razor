@@ -1,0 +1,50 @@
+﻿@page "/AllCompanies"
+@using WifiBlazor.Model
+
+<h3>Firmen</h3>
+
+@if (Companies == null)
+{
+	<p>Daten werden geladen...</p>
+}
+else
+{
+	<table class="table table-bordered table-responsive table-hover">
+		<thead>
+			<tr>
+				<th scope="col">Id</th>
+				<th scope="col">Name</th>
+				<th scope="col">Anzahl off. Rechnungen</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var company in Companies)
+			{
+				<tr>
+					<td>@company.Id</td>
+					<td>@company.Name</td>
+					<td>@GetUnpaid(company)</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+
+
+
+
+@code {
+	public List<Company> Companies { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(2000);
+		Companies = Model.DB.ListOfCompanies;
+	}
+
+	int GetUnpaid(Model.Company company)
+	{
+		return Model.DB.ListOfInvoices.Where(x => x.Company == company && x.Paid == false).Count();
+	}
+}
